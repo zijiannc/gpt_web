@@ -1,16 +1,44 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的聊天机器人</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>聊天机器人</title>
+    <link rel="stylesheet" href="static/css/styles.css">
 </head>
 <body>
-  <div id="chatArea"></div>
-  <input id="messageInput" type="text" placeholder="输入你的问题">
-  <button id="sendButton">发送</button>
+    <div class="container">
+        <div id="chatArea"></div>
+        <div id="inputArea">
+            <input type="text" id="messageInput" placeholder="输入消息...">
+            <button id="sendButton">发送</button>
+        </div>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/js/scripts.js"></script>
+    <script>
+      $(document).ready(function() {
+        displayBotMessage("请输入你想要问我的问题...");
+      });
+    </script>
+    <script>
+      // 当用户刷新页面时，清除localStorage中的聊天记录
+      window.addEventListener("beforeunload", function (event) {
+        localStorage.removeItem("chatHistory");
+      });
+    </script>
+    <script>
+      // 当用户刷新页面时，通知服务器清除聊天记录
+      window.addEventListener("beforeunload", function (event) {
+        // 使用Ajax向后端发送请求
+        $.ajax({
+          url: "/clear_history",
+          type: "POST",
+          async: false, // 确保请求在页面关闭之前完成
+        });
+      });
+    </script>
+    
 </body>
 </html>
