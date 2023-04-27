@@ -41,6 +41,11 @@
     font-weight: bold;
   }
   
+  .bot-message {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
   .user {
     color: #8e24aa;
     font-weight: bold;
