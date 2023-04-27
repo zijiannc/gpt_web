@@ -2,76 +2,26 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>聊天机器人</title>
-  <link rel="stylesheet" href="static/css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用户登录</title>
+    <link rel="stylesheet" href="static/css/login.css">
 </head>
 
 <body>
-  <style>
-    nav {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      background-color: #333;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      height: 50px;
-    }
-    nav button {
-      background-color: #333;
-      border: none;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-    nav button:hover {
-      color: #ddd;
-    }
-    .content {
-      padding-top: 60px;
-    }
-  </style>
-  <nav>
-    <button onclick="window.location.href='/'">|首页|</button>
-    <button onclick="window.location.href='/question_answer'">|问答|</button>
-    <button onclick="window.location.href='/wise_group'">|讨论组|</button>
-  </nav>
-  <div class="container">
-    <div id="chatArea"></div>
-    <div id="inputArea">
-      <input type="text" id="messageInput" placeholder="输入消息...">
-      <button id="sendButton">发送</button>
+    <div class="container">
+        <h2 class="center-text">你猜猜密码是多少?</h2>
+        <form id="login-form">
+            <label for="username">用户名:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="passwd">密码</label>
+            <input type="text" id="passwd" name="passwd" required>
+            <input type="submit" value="登录">
+        </form>
     </div>
-  </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="static/js/scripts.js"></script>
-  <script>
-    $(document).ready(function () {
-      displayBotMessage("请输入你想要问我的问题...");
-    });
-  </script>
-  <script>
-    // 当用户刷新页面时，清除localStorage中的聊天记录
-    window.addEventListener("beforeunload", function (event) {
-      localStorage.removeItem("chatHistory");
-    });
-  </script>
-  <script>
-    // 当用户刷新页面时，通知服务器清除聊天记录
-    window.addEventListener("beforeunload", function (event) {
-      // 使用Ajax向后端发送请求
-      $.ajax({
-        url: "/clear_history",
-        type: "POST",
-        async: false, // 确保请求在页面关闭之前完成
-      });
-    });
-  </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/js/login.js"></script>
 
 </body>
 

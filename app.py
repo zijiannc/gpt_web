@@ -1,10 +1,32 @@
 import os
 import functools
 
+
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
+from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, request, jsonify, render_template
 import openai
 
 app = Flask(__name__)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'logged_in'
+
+app.secret_key = os.urandom(24)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users2.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    passwd = db.Column(db.String(120), unique=True, nullable=False)
+    #is_active = db.Column(db.Boolean(), default=True)  # 定义 is_active 属性，默认为 True
+    def __repr__(self):
+        return f'<User {self.username}>'
+
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # 创建一个字典来存储每个用户的消息历史
@@ -15,10 +37,12 @@ def get_history_key(user_ip, page, chat_id):
 
 
 @app.route('/question_answer')
+@login_required
 def question_answer():
     return render_template('question_answer.html')
 
 @app.route('/wise_group')
+@login_required
 def wise_group():
     return render_template('wise_group.html')
 
@@ -86,5 +110,54 @@ def clear_history():
         user_histories.pop(history_key)
     return "OK"
 
+@app.route('/check_login', methods=['POST'])
+def check_login():
+    data = request.get_json()
+    username = data.get('username')
+    passwd = data.get('passwd')
+    
+    print('Username:', username)
+    print('Passwd:', passwd)
+
+    user = User.query.filter_by(username=username, passwd=passwd).first()
+    
+    print('User:', user)
+
+    if user:
+        login_user(user)
+
+        return jsonify({'success': True})
+    else:
+        return jsonify({'success': False, 'message': '用户名或API密钥错误'})
+
+
+
+
+def add_user(username, passwd):
+    existing_user = User.query.filter_by(username=username).first()
+    #print username and passwd to console
+    print(f"Username: {username}")
+    print(f"Passwd: {passwd}")
+
+    if existing_user:
+        print(f"Username {username} already exists. Updating API key.")
+        existing_user.passwd = passwd
+    else:
+        new_user = User(username=username, passwd=passwd)
+        db.session.add(new_user)
+
+    db.session.commit()
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+@app.route('/logged_in')
+def logged_in():
+    return jsonify({'logged_in': current_user.is_authenticated})
+
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
+        add_user('admin','admin')
     app.run(host='0.0.0.0', port=5001, debug=True)

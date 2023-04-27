@@ -13,7 +13,7 @@ $(document).ready(function () {
     });
 
     // 在页面加载时清除历史记录
-    //clearHistory();
+    clearHistory();
 });
 
 function sendMessage() {
@@ -83,3 +83,6 @@ function clearHistory() {
         },
     });
 }
+
+
+

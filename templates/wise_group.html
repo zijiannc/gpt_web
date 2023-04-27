@@ -5,124 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>讨论组</title>
-    <link rel="stylesheet" href="static/css/styles.css">
-
+    <link rel="stylesheet" href="static/css/wise_group.css">
 </head>
 
 <body>
-    <style>
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #333;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 50px;
-        }
 
-        nav button {
-            background-color: #333;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        nav button:hover {
-            color: #ddd;
-        }
-
-        .content {
-            padding-top: 60px;
-        }
-
-        /* 将之前示例中的样式添加到这里 */
-        #chatList {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 10px;
-            background-color: #f1f1f1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-
-        .chat-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px;
-            background-color: #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .chat-item:hover {
-            background-color: #ccc;
-        }
-
-        .delete-chat {
-            color: #f00;
-            margin-left: 10px;
-            cursor: pointer;
-        }
-
-        .delete-chat:hover {
-            color: #a00;
-        }
-
-        #newChat {
-            display: block;
-            width: 100%;
-            background-color: #333;
-            color: #fff;
-            text-align: center;
-            padding: 5px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        #newChat:hover {
-            background-color: #222;
-        }
-
-        .left-sidebar {
-            width: 25%;
-            float: left;
-        }
-
-        .chat-content {
-            width: 75%;
-            float: right;
-        }
-
-        .chat-list-container {
-            max-height: calc(100vh - 400px);
-            overflow-y: auto;
-        }
-
-        .chat-item.selected {
-            background-color: #aaa;
-        }
-    </style>
     <nav>
-        <button onclick="window.location.href='/'">|首页|</button>
+        <button onclick="window.location.href='/'">|用户登陆|</button>
         <button onclick="window.location.href='/question_answer'">|问答|</button>
         <button onclick="window.location.href='/wise_group'">|讨论组|</button>
     </nav>
 
     <div class="container">
         <h2>讨论组</h2>
-        <div class="left-sidebar">
-            <button id="newChat">新建聊天</button>
-            <div class="chat-list-container">
-                <div id="chatList"></div>
-            </div>
-        </div>
-        <div class="chat-content">
+        <div class="chat-content" style="width: 100%;">
             <div id="messages"></div>
             <div id="chatArea"></div>
             <div id="inputArea">
@@ -131,8 +27,6 @@
             </div>
         </div>
     </div>
-
-
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="static/js/scripts.js"></script>
@@ -162,96 +56,12 @@
         var currentPage = "wise_group";
     </script>
 
-    <!-- 将之前示例中的 jQuery 和 JavaScript 代码添加到这里 -->
     <script>
-        // Generate a random chat ID
-        function generateChatID() {
-            return Math.random().toString(36).substr(2, 5);
-        }
-
-        // Update the chat list and add click listeners
-        function updateChatList(chatList) {
-            $("#chatList").empty();
-            for (const chatID in chatList) {
-                const chatItem = $(`<div class="chat-item" data-chat-id="${chatID}">${chatList[chatID].name}<span class="delete-chat">X</span></div>`);
-                $("#chatList").append(chatItem);
-
-                chatItem.click(function () {
-                    const chatID = $(this).data("chat-id");
-                    loadChat(chatID);
-                });
-
-                chatItem.find(".delete-chat").click(function (event) {
-                    event.stopPropagation();
-                    deleteChat(chatID);
-                });
-            }
-        }
-
-        // Load a chat by chat ID
-        function loadChat(chatID) {
-            const chatHistory = getChatHistory(chatID);
-            $("#messages").empty();
-            for (const message of chatHistory) {
-                displayMessage(message);
-            }
-
-            // 添加这两行代码
-            $(".chat-item.selected").removeClass("selected");
-            $(`[data-chat-id="${chatID}"]`).addClass("selected");
-
-        }
-
-        // Delete a chat by chat ID
-        function deleteChat(chatID) {
-            let chatList = getChatList();
-            delete chatList[chatID];
-            setChatList(chatList);
-            updateChatList(chatList);
-        }
-
-        // Get chat list from localStorage
-        function getChatList() {
-            const chatList = JSON.parse(localStorage.getItem("chatList")) || {};
-            return chatList;
-        }
-
-        // Set chat list to localStorage
-        function setChatList(chatList) {
-            localStorage.setItem("chatList", JSON.stringify(chatList));
-        }
-
-        // Get chat history by chat ID from localStorage
-        function getChatHistory(chatID) {
-            const chatList = getChatList();
-            return chatList[chatID].history || [];
-        }
-
-        // Save chat history to localStorage
-        function saveChatHistory(chatID, chatHistory) {
-            const chatList = getChatList();
-            chatList[chatID].history = chatHistory;
-            setChatList(chatList);
-        }
-
         // Display a message in the chat area
         function displayMessage(message) {
             const messageElem = $(`<div class="message ${message.role}"><div class="message-content">${message.content}</div></div>`);
 
             $("#messages").append(messageElem);
-        }
-        // Add a new chat
-        function addNewChat() {
-            const chatID = generateChatID();
-            let chatList = getChatList();
-
-            chatList[chatID] = {
-                name: "聊天 " + Object.keys(chatList).length,
-                history: []
-            };
-
-            setChatList(chatList);
-            updateChatList(chatList);
         }
 
         // Update the send button click listener
@@ -259,17 +69,10 @@
             const userMessage = $("#messageInput").val().trim();
             if (!userMessage) return;
 
-            const chatID = $(".chat-item.selected").data("chat-id");
-            if (!chatID) return;
-
-            const chatHistory = getChatHistory(chatID);
-
             const message = {
                 role: "user",
                 content: userMessage
             };
-            chatHistory.push(message);
-            saveChatHistory(chatID, chatHistory);
 
             displayMessage(message);
 
@@ -288,20 +91,13 @@
                         role: "assistant",
                         content: response
                     };
-                    chatHistory.push(assistantMessage);
-                    saveChatHistory(chatID, chatHistory);
 
                     displayMessage(assistantMessage);
                 }
             });
         });
-
-        // Initialize the chat list and click listeners
-        updateChatList(getChatList());
-
-        // Add new chat button click listener
-        $("#newChat").click(addNewChat);
     </script>
+
 </body>
 
 </html>
