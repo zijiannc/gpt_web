@@ -46,6 +46,11 @@ def question_answer():
 def wise_group():
     return render_template('wise_group.html')
 
+@app.route('/re_word')
+@login_required
+def re_word():
+    return render_template('re_word.html')
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -73,11 +78,35 @@ def process_chat_request(route, temperature, system_setting_message):
 
     return jsonify({"response": response})
 
+def process_chat_request2(route, temperature, system_setting_message):
+    user_message = request.json['message']
+    page = request.json.get('page', 'index')
+    chat_id = request.json.get('chat_id', 'default')
+    user_ip = request.remote_addr
+    history_key = get_history_key(user_ip, page, chat_id)
+
+    user_histories[history_key] = [{"role": "system", "content": system_setting_message}]
+    user_histories[history_key].append({"role": "user", "content": "help me re-word and give a 主题:" + user_message})
+    print(user_histories)
+    completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        temperature=temperature,
+        messages=user_histories[history_key]
+    )
+
+    response = completion.choices[0].message.content
+    user_histories[history_key].append({"role": "assistant", "content": response})
+
+    return jsonify({"response": response})
+
+
 def route_decorator(route, temperature, system_setting_message):
     def route_decorator_inner(func):
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             if request.method == 'POST':
+                if route == '/chat_re_word':
+                    return process_chat_request2(route, temperature, system_setting_message)
                 return process_chat_request(route, temperature, system_setting_message)
             return func(*args, **kwargs)
         return wrapper
@@ -93,8 +122,13 @@ def chat():
 def chat_wise_group():
     return None
 
+@app.route('/chat_re_word', methods=['GET', 'POST'])
+@route_decorator('/chat_re_word', 1.0, "你好,我是您的语言助理,我可以帮助您根据您发的文字重新排版.")
+def chat_re_word():
+    return None
+
 @app.route('/chat_question_answer', methods=['GET', 'POST'])
-@route_decorator('/chat_question_answer', 0.2,"你好,我是您的私人顾问,我可以回答任何问题.")
+@route_decorator('/chat_question_answer', 0.8,"你好,我是您的私人顾问,我可以回答任何问题.")
 def chat_question_answer():
     return None
 
@@ -124,11 +158,11 @@ def check_login():
     print('User:', user)
 
     if user:
-        login_user(user)
+        login_user(user,remember=True)
 
         return jsonify({'success': True})
     else:
-        return jsonify({'success': False, 'message': '用户名或API密钥错误'})
+        return jsonify({'success': False, 'message': '用户名或密钥错误'})
 
 
 

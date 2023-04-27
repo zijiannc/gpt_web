@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重新编排</title>
+    <link rel="stylesheet" href="static/css/wise_group.css">
+</head>
+
+<body>
+    {% include 'nav.html' %}
+    
+    <div class="container">
+        <h2>重新编排</h2>
+        <div id="chatArea"></div>
+        <div id="inputArea">
+            <input type="text" id="messageInput" placeholder="输入消息...">
+            <button id="sendButton">发送</button>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="static/js/scripts.js"></script>
+    <script>
+        $(document).ready(function () {
+            displayBotMessage("你好,我是您的私人顾问,我可以帮助您根据你发的文字,生成一种更好的版本,而且语法会很正确.");
+        });
+    </script>
+    <script>
+        const chatURL = '/chat_re_word';
+    </script>
+    <script>
+        // 当用户刷新页面时，清除localStorage中的聊天记录
+        window.addEventListener("beforeunload", function (event) {
+            localStorage.removeItem("chatHistory");
+        });
+    </script>
+    <script>
+        // 当用户刷新页面时，通知服务器清除聊天记录
+        window.addEventListener("beforeunload", function (event) {
+            // 使用Ajax向后端发送请求
+            $.ajax({
+                url: "/clear_history",
+                type: "POST",
+                async: false, // 确保请求在页面关闭之前完成
+            });
+        });
+    </script>
+<script>
+    var currentPage = "re_word";
+</script>
+
+</body>
+
+</html>

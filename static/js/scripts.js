@@ -31,6 +31,9 @@ function sendMessage() {
         case '/question_answer':
             requestUrl = '/chat_question_answer';
             break;
+        case '/re_word':
+            requestUrl = '/chat_re_word';
+            break;
         default:
             requestUrl = '/chat';
             break;

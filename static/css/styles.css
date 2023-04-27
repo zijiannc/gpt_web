@@ -75,3 +75,30 @@
     cursor: pointer;
   }
   
+  nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #333;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 50px;
+}
+
+nav button {
+    background-color: #333;
+    border: none;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+nav button:hover {
+    color: #ddd;
+}
+
+.content {
+    padding-top: 60px;
+}

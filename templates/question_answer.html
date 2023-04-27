@@ -5,45 +5,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>问答</title>
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/wise_group.css">
 </head>
 
 <body>
-    <style>
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            background-color: #333;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            height: 50px;
-        }
-
-        nav button {
-            background-color: #333;
-            border: none;
-            color: white;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        nav button:hover {
-            color: #ddd;
-        }
-
-        .content {
-            padding-top: 60px;
-        }
-    </style>
-    <nav>
-        <button onclick="window.location.href='/'">|用户登陆|</button>
-        <button onclick="window.location.href='/question_answer'">|问答|</button>
-        <button onclick="window.location.href='/wise_group'">|讨论组|</button>
-    </nav>
-    
+    {% include 'nav.html' %}
     <div class="container">
         <h2>问答</h2>
         <div id="chatArea"></div>

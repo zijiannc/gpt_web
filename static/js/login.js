@@ -15,6 +15,7 @@ $("#login-form").submit(function (event) {
                 // 登录成功，重定向到其他页面
                 window.location.href = "/question_answer";
             } else {
+                window.location.href = "/login"
                 // 登录失败，显示错误消息
                 alert(response.message);
             }
